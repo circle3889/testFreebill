@@ -1,0 +1,15 @@
+applications:
+- name: twdFreebill
+  memory: 512M
+  instances: 1
+  path: ./defaultServer
+#  path: ./target/twdFreebill-0.0.1-SNAPSHOT.war
+  no-route: true
+  random-route: true
+  buildpack: liberty-for-java
+  services:
+  - Redis-ma
+  - logstash-drain
+  
+  env:
+    JAVA_OPTS: -Djava.security.egd=file:///dev/urandom

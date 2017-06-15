@@ -1,0 +1,65 @@
+spring:
+  application:
+    name: twdFreebill
+#  datasource:
+#    driver-class-name: com.mysql.jdbc.Driver
+#    url: jdbc:mysql://169.56.68.111:3306/tworld?useUnicode=true&charaterEncoding=euc-kr
+#    username: tworld
+#    password: tworld!23$ 
+  jpa:
+    show-sql: true
+
+uri:
+  apigateway: https://twdapigateway-interpervasive-pianist.sk.kr.mybluemix.net
+  login: /login
+  freebill: /freebill
+  main: /main
+  
+services:
+  redis: 
+    name: Redis-ma
+  logstash:
+    name: logstash-drain
+  database:
+    name: maria-db
+    
+debug: true
+logging:
+  level:
+    org.springframework.web: ERROR
+    kr.co.tworld: DEBUG
+  pattern:
+    console: ${spring.application.name} %d{yyyy:MM:dd} %-5level --- [%thread] %logger{35} / %msg %n
+
+server:
+  port: ${PORT}
+
+hystrix: 
+  command: 
+    default: 
+      execution: 
+        isolation:
+          thread:
+            timeoutInMilliseconds:  60000
+        timeout:
+          enabled: true
+      circuitBreaker:
+        enabled: true
+  threadpool: 
+    default:  
+      coreSize: 10    
+    
+eureka:  
+  instance:    
+    prefer-ip-address: true    
+    ip-address: ${CF_INSTANCE_IP}    
+    non-secure-port: ${CF_INSTANCE_PORT}
+    instance-id: ${vcap.application.instance_id:${spring.application.name}:${spring.application.instance_id:${server.port}}}    
+    lease-renewal-interval-in-seconds: 15  
+  client:    
+    region: default    
+    fetch-registry: true    
+    registry-fetch-interval-seconds: 30    
+    register-with-eureka: true    
+    service-url:      
+     defaultZone: ${vcap.services.DiscoveryService-i5.credentials.uri}/eureka/
